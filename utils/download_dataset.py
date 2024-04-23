@@ -18,4 +18,4 @@ def download_dataset_if_needed(path: str = "./LivingRoom_preprocessed_hack"):
     fs.download(path_to_dataset, ".")
 
     with zipfile.ZipFile(f"./{os.path.basename(path_to_dataset)}", "r") as zip_file:
-        zip_file.extractall(path)
+        zip_file.extractall('.')
