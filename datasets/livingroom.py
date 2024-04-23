@@ -19,7 +19,7 @@ mic_8 = np.array([12.75, -4*y_tile - 3.125, mic_height])*25.4
 mic_9 = np.array([-3, -6*y_tile - 0.5, mic_height])*25.4
 mic_10 = np.array([-4*x_tile - 5.75, -6*y_tile - 0.75, mic_height])*25.4
 
-mic_xyzs = np.stack((mic_1, mic_2, mic_3, mic_4, mic_5, mic_6, mic_7, mic_8, mic_9, mic_10),axis=0)
+mic_xyzs = np.stack((mic_1, mic_4, mic_6, mic_9),axis=0)
 
 SPEAKER_BOTTOM_RIGHT_Y = (1200.15+1196.975+1206.5)/3
 SPEAKER_BOTTOM_RIGHT_X = (88.9 +107.95+101.6)/3
