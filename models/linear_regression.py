@@ -1,6 +1,6 @@
 from sklearn import linear_model
 
-class LinearModel:
+class LinearRegression:
     def __init__(self):
         self.model = linear_model.LinearRegression()
     
@@ -9,4 +9,3 @@ class LinearModel:
     
     def predict(X_test):
         self.model.predict(X_test)
-    
