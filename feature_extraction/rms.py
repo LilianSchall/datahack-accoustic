@@ -24,6 +24,9 @@ def reshape_rms(rms_values):
 def __rms_exist(frame_length, hop_length):
     return os.path.exists(f"rms_{frame_length}_{hop_length}.npy")
 
+def __save_rms(arr, frame_length, hop_length):
+    np.save(f"rms_{frame_length}_{hop_length}.npy", arr)
+
 def generate_rms(dt, frame_length=None, hop_length=None):
     if frame_length is None and hop_length is not None:
         raise ValueError("hop_length cannot be set if frame_length isn't")
