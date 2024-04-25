@@ -188,24 +188,15 @@ class VGGishMulti:
         test_waves = test_waves[..., :vggish_cutoff]
 
         # Iterate through test
-        test_errors = np.zeros(test_waves.shape[0], dtype=np.float32)
-
+        predictions = np.zeros((test_waves.shape[0], 2), dtype=np.float32)
         for i in range(test_waves.shape[0]):
             with torch.no_grad():
                 results = torch.squeeze(self.postprocess_net_output(self.model(torch.unsqueeze(test_waves[i, :], axis=0)).view(-1, 1)))
-            test_errors[i] = torch.norm(unnormalize(results[:2]) - unnormalize(test_xy[i, :2])).item()
+            predictions[i] = unnormalize(results[:2])
+            # test_errors[i] = torch.norm(unnormalize(results[:2]) - unnormalize(test_xy[i, :2])).item()
 
-        print("TEST ERROR")
-        print(test_errors)
-        
-        print("MEAN TEST ERROR",flush=True)
-        print(np.mean(test_errors))
-        print("MED TEST ERROR")
-        print(np.median(test_errors))
-        print("STD TEST ERROR")
-        print(np.std(test_errors))
+        return predictions
 
-        np.save(os.path.join(self.error_path, 'test_errors.npy'), np.array(test_errors, dtype=np.float32))
 
 
 class VGGModel(torch.nn.Module):
