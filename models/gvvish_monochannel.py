@@ -13,7 +13,7 @@ ERROR_PATH = "errors"
 SAVE_PATH = "model.pt"
 SEED = 1337
 BATCH_SIZE = 512
-NUM_EPOCHS = 10
+NUM_EPOCHS = 200
 PRETRAINED = True
 NUM_CHANNELS = 4
 LR = 1e-4
@@ -167,6 +167,7 @@ class GvvishMonoModel(torch.nn.Module):
                 results = self.postprocess_net_output(net_out)
                 xy_loss = self.xy_loss_fn(results[:, :2], self.train_xy[curr_idx, :2])
                 loss = xy_loss
+                print('xy_loss: %0.3f'%loss)
                 self.optimizer.zero_grad()
                 loss.backward()
                 train_loss = loss.item()
@@ -245,10 +246,10 @@ class GvvishMonoModel(torch.nn.Module):
             # Perform inference
             self.resnet.eval()
             print(X_test.shape)  # Print the shape to verify it's correct
-            output = self.resnet(X_test)
+            output = self.resnet(torch.mean(X_test, dim=1, keepdim=True))
             output = self.postprocess_net_output(output)
             
             # Convert output to numpy array
-            output = output.cpu().numpy()
+            np_output = output.detach().cpu().numpy()
         
-        return output
+        return np_output, self.unnormalize(output).detach().cpu().numpy()
