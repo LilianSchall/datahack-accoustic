@@ -85,10 +85,10 @@ class VGGishMulti:
         train_waves = train_waves[..., :precutoff]
         valid_waves = valid_waves[..., :precutoff]
 
-        train_waves = torch.Tensor(train_waves)#.cuda()
-        train_xy = torch.Tensor(train_xy)#.cuda()
-        valid_waves = torch.Tensor(valid_waves)#.cuda()
-        valid_xy = torch.Tensor(valid_xy)#.cuda()
+        train_waves = torch.Tensor(train_waves).cuda()
+        train_xy = torch.Tensor(train_xy).cuda()
+        valid_waves = torch.Tensor(valid_waves).cuda()
+        valid_xy = torch.Tensor(valid_xy).cuda()
 
         vggish_cutoff = 15475
         train_waves = train_waves[..., :vggish_cutoff]
@@ -170,8 +170,8 @@ class VGGishMulti:
 
         test_xy = (y_test - self.train_mean) / (self.train_std + 1e-8)
 
-        train_std_cuda = torch.Tensor(self.train_std)#.cuda()           
-        train_mean_cuda = torch.Tensor(self.train_mean)#.cuda()
+        train_std_cuda = torch.Tensor(self.train_std).cuda()           
+        train_mean_cuda = torch.Tensor(self.train_mean).cuda()
 
         def unnormalize(xy):
             return xy*(train_std_cuda + 1e-8) + train_mean_cuda
@@ -181,21 +181,22 @@ class VGGishMulti:
         precutoff = 92850
         test_waves = test_waves[..., :precutoff]
 
-        test_waves = torch.Tensor(test_waves)#.cuda()
-        test_xy = torch.Tensor(test_xy)#.cuda()
+        test_waves = torch.Tensor(test_waves).cuda()
+        test_xy = torch.Tensor(test_xy).cuda()
 
         vggish_cutoff = 15475
         test_waves = test_waves[..., :vggish_cutoff]
 
         # Iterate through test
         predictions = np.zeros((test_waves.shape[0], 2), dtype=np.float32)
+        predictions = torch.Tensor(predictions).cuda()
         for i in range(test_waves.shape[0]):
             with torch.no_grad():
                 results = torch.squeeze(self.postprocess_net_output(self.model(torch.unsqueeze(test_waves[i, :], axis=0)).view(-1, 1)))
             predictions[i] = unnormalize(results[:2])
             # test_errors[i] = torch.norm(unnormalize(results[:2]) - unnormalize(test_xy[i, :2])).item()
 
-        return predictions
+        return predictions.detach().cpu().numpy()
 
 
 
@@ -231,7 +232,7 @@ class CustomVGGish2(VGG):
                             torch.nn.ReLU(),
                             torch.nn.Dropout(p_dropout),
                             torch.nn.Linear(in_features=256, out_features=out_channels, bias=True)
-                            )#.cuda()
+                            ).cuda()
 
     def forward(self, x):
         x = self._preprocess(x)
