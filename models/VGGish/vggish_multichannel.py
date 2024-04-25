@@ -30,7 +30,7 @@ class VGGishMulti:
         self.epsilon = 1e-2
 
         if saved_model is not None:
-            saved_model = torch.load(saved_model)
+            saved_model = torch.load(saved_model, map_location=torch.device('cpu'))
             
             self.model.state_dict = saved_model['model_state_dict']
             self.train_std = saved_model['train_std']
